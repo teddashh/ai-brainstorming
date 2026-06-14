@@ -1,0 +1,12 @@
+node_modules/
+dist/
+data/
+.env
+.env.*
+!.env.example
+*.log
+*.sqlite
+*.db
+server/tsconfig.tsbuildinfo
+web/tsconfig.tsbuildinfo
+
