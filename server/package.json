@@ -9,7 +9,7 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@hono/node-server": "^1.13.7",
+    "@hono/node-server": "^1.19.15",
     "better-sqlite3": "^11.5.0",
     "dotenv": "^16.4.7",
     "hono": "^4.6.13",
