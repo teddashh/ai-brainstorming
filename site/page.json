@@ -1,0 +1,180 @@
+{
+  "repo": "teddashh/ai-brainstorming",
+  "slug": "ai-brainstorming",
+  "name": "AI Brainstorming",
+  "mark": "AB",
+  "palette": "violet",
+  "default_branch": "main",
+  "verified": "2026-09-30",
+  "language": "TypeScript",
+  "title": {"en": "A five-model review panel for one idea", "zh": "五個模型組成的點子審查小組"},
+  "description": {
+    "en": "A small web app at /idea: leave an email and an idea, pick 5, 12, or 16 rounds, and five models take turns building, attacking, and narrowing it down. The transcript comes back as Markdown, on the page, as a download, or by email.",
+    "zh": "一個放在 /idea 的小型網頁程式：留下 email 和點子，選 5、12 或 16 輪，五個模型輪流立論、攻防、收斂。整份紀錄以 Markdown 交回，可以在頁面上看、下載，或寄到信箱。"
+  },
+  "hero": {
+    "eyebrow": {"en": "Idea review · web MVP", "zh": "點子審查 · 網頁 MVP"},
+    "headline": {"en": "Let five models <em>question</em> your idea.", "zh": "讓五個模型輪流<em>質疑</em>你的點子。"},
+    "lede": {
+      "en": "Claude, Gemini, Grok, ChatGPT, and DeepSeek answer side by side for 5, 12, or 16 rounds: a thesis first, then a clash, then convergence. You get a resume link right away and the full transcript as Markdown at the end.",
+      "zh": "Claude、Gemini、Grok、ChatGPT 和 DeepSeek 同時作答，跑 5、12 或 16 輪：先立論，再攻防，最後收斂。送出後馬上拿到接續連結，跑完再拿到 Markdown 格式的完整紀錄。"
+    },
+    "primary": {"href": "#start", "label": {"en": "Run it locally", "zh": "在本機跑起來"}},
+    "secondary": {"href": "https://github.com/teddashh/ai-brainstorming", "label": {"en": "View source", "zh": "查看原始碼"}},
+    "notes": [
+      "Hono + React + SQLite",
+      "OpenRouter",
+      {"en": "No accounts, resume by link", "zh": "不用帳號，靠連結接續"}
+    ],
+    "visual": {
+      "type": "receipt",
+      "top": {"en": "Current round", "zh": "目前輪次"},
+      "badge": {"en": "Clash", "zh": "互相攻防"},
+      "name": "R3 / 5",
+      "meta": {"en": "Round 3 of 5 · all five seats answer in parallel", "zh": "第 3 / 5 輪 · 五個席位同時作答"},
+      "rows": [
+        {"state": "ok", "label": "Claude", "detail": "anthropic/claude-sonnet-4", "side": "done"},
+        {"state": "ok", "label": "Gemini", "detail": "google/gemini-2.5-pro", "side": "done"},
+        {"state": "wait", "label": "Grok", "detail": "x-ai/grok-4", "side": "working"},
+        {"state": "ok", "label": "ChatGPT", "detail": "openai/gpt-4o", "side": "done"},
+        {"state": "wait", "label": "DeepSeek", "detail": "deepseek/deepseek-r1", "side": "working"}
+      ],
+      "footer": {"left": {"en": "Round 3 in progress", "zh": "第 3 輪進行中"}, "right": "3 / 5"}
+    }
+  },
+  "stats": [
+    {"value": "5", "label": {"en": "Model seats per round", "zh": "每輪的模型席位"}},
+    {"value": "5 / 12 / 16", "label": {"en": "Round options", "zh": "可選的輪數"}},
+    {"value": "3", "label": {"en": "Phases: thesis, clash, converge", "zh": "階段：立論、攻防、收斂"}},
+    {"value": "30 min", "label": {"en": "Default time limit per run", "zh": "每次執行的預設上限"}}
+  ],
+  "flow": {
+    "kicker": {"en": "How it works", "zh": "運作方式"},
+    "title": {"en": "One form, several rounds, one transcript.", "zh": "一張表單，幾輪討論，一份紀錄。"},
+    "intro": {
+      "en": "The page starts the run as soon as the session exists. Everything after that is kept on the server, so closing the tab does not lose the review.",
+      "zh": "Session 一建立，頁面就自動開始執行。之後的一切都留在伺服器上，關掉分頁也不會弄丟這次審查。"
+    },
+    "steps": [
+      {"title": {"en": "Submit once", "zh": "送出一次"},
+       "body": {"en": "Leave an email and an idea of 10 to 12,000 characters, and pick 5, 12, or 16 rounds. The session goes into SQLite and the page URL becomes the resume link, which is also emailed when SMTP is set.",
+                "zh": "留下 email 和一段 10 到 12,000 字的點子，選 5、12 或 16 輪。Session 存進 SQLite，頁面網址就是接續連結；有設定 SMTP 時也會寄到信箱。"}},
+      {"title": {"en": "Look for evidence, or say there is none", "zh": "先找資料，找不到就明說"},
+       "body": {"en": "With SEARXNG_URL set, three searches (the idea, its market risk, its competitors) put up to nine results into every prompt as weak context. Without it, the models are told to treat every claim as a hypothesis.",
+                "zh": "設定 SEARXNG_URL 後，會用三組查詢（點子本身、市場風險、競品）找最多九筆結果，當作參考價值有限的背景放進每個 prompt。沒有設定時，會告訴模型所有說法都只是假設。"}},
+      {"title": {"en": "Five seats, round by round", "zh": "五個席位，一輪一輪來"},
+       "body": {"en": "Each round, all five seats answer in parallel in Traditional Chinese, 350 to 650 characters each, with the last ten answers in view. The phases run thesis, clash, converge.",
+                "zh": "每一輪五個席位同時作答，用繁體中文寫 350 到 650 字，並看得到最近十則回答。階段依序是立論、攻防、收斂。"}},
+      {"title": {"en": "Read it, download it, or get it by email", "zh": "線上看、下載，或收信"},
+       "body": {"en": "The finished transcript renders on the page and downloads as idea-review.md. With SMTP configured, the same Markdown arrives by email as HTML, with the file attached.",
+                "zh": "跑完的紀錄直接顯示在頁面上，也能下載成 idea-review.md。有設定 SMTP 的話，同一份內容會以 HTML 寄到信箱，並附上 .md 檔。"}}
+    ]
+  },
+  "capabilities": {
+    "kicker": {"en": "What you get", "zh": "你會得到什麼"},
+    "title": {"en": "Small, but built for public use.", "zh": "規模不大，但照公開服務設計。"},
+    "intro": {
+      "en": "One Hono server, one React page, one SQLite file. The parts that face strangers on the internet have limits; the parts that are nice to have can be switched off.",
+      "zh": "一個 Hono 伺服器、一個 React 頁面、一個 SQLite 檔。會面對陌生使用者的部分都有限制，錦上添花的部分可以關掉。"
+    },
+    "items": [
+      {"title": {"en": "Five seats, one key", "zh": "五個席位，一把金鑰"},
+       "body": {"en": "Claude, Gemini, Grok, ChatGPT, and DeepSeek all go through OpenRouter's chat completions API with one OPENROUTER_API_KEY. Each seat's model ID can be swapped with MODEL_CLAUDE, MODEL_GEMINI, and the rest.",
+                "zh": "Claude、Gemini、Grok、ChatGPT、DeepSeek 都透過 OpenRouter 的 chat completions API 呼叫，只需要一組 OPENROUTER_API_KEY。每個席位的模型 ID 都能用 MODEL_CLAUDE、MODEL_GEMINI 等變數替換。"},
+       "tag": "server/src/models.ts"},
+      {"title": {"en": "Round plans that end in a call", "zh": "最後要給結論的輪次安排"},
+       "body": {"en": "5 rounds run 1 thesis, 3 clash, 1 converge. 12 rounds run 2, 8, 2, and 16 rounds run 3, 10, 3. The prompt asks for clear trade-offs instead of a polite list of things to validate.",
+                "zh": "5 輪是 1 輪立論、3 輪攻防、1 輪收斂；12 輪是 2、8、2；16 輪是 3、10、3。Prompt 要求給出明確取捨，而不是一串客氣的「建議再驗證」。"},
+       "tag": "schedule()"},
+      {"title": {"en": "Resume without accounts", "zh": "不用帳號也能接續"},
+       "body": {"en": "The resume link carries a 24-byte random token. Come back later and the page reloads the session from SQLite, polling every 5 seconds while the run is still going.",
+                "zh": "接續連結帶著一組 24 位元組的隨機 token。之後再回來，頁面會從 SQLite 讀回 session；如果還在跑，每 5 秒同步一次。"},
+       "tag": "/idea?s=<token>"},
+      {"title": {"en": "Live progress, durable results", "zh": "即時進度，結果留存"},
+       "body": {"en": "The run streams server-sent events: each round starting, each seat finishing, and a ping every 15 seconds. The stream is best effort; SQLite and the result email are the record.",
+                "zh": "執行過程用 server-sent events 推送：每輪開始、每個席位完成，以及每 15 秒一次的 ping。串流只是盡力而為，真正的紀錄在 SQLite 和結果信裡。"},
+       "tag": "POST /api/idea/run/:token"},
+      {"title": {"en": "Markdown out, by download or email", "zh": "Markdown 輸出，下載或寄信"},
+       "body": {"en": "The export returns the original idea and every round, seat by seat. nodemailer sends a resume email at the start and the result at the end; without SMTP settings, email is skipped and nothing else breaks.",
+                "zh": "匯出內容包含原始點子，以及每一輪、每個席位的回答。nodemailer 在開始時寄出接續信，結束時寄出結果信；沒有設定 SMTP 就略過寄信，其他功能照常。"},
+       "tag": "GET /api/idea/export/:token.md"},
+      {"title": {"en": "Limits for a public form", "zh": "公開表單該有的限制"},
+       "body": {"en": "Per hour: 12 starts per IP, 4 per email, 8 runs per IP, plus global caps. At most 3 runs at once, each with a 30-minute timeout. Behind a trusted proxy, TRUST_PROXY_HEADERS lets the per-IP limits see the real client.",
+                "zh": "每小時每個 IP 最多建立 12 次、每個 email 4 次，每個 IP 最多執行 8 次，另有全站上限。同時最多 3 個執行，每個執行 30 分鐘逾時。放在可信任的反向代理後面時，TRUST_PROXY_HEADERS 讓每 IP 限制看到真正的來源。"},
+       "tag": "server/src/index.ts"}
+    ]
+  },
+  "decisions": {
+    "kicker": {"en": "Design decisions", "zh": "設計取捨"},
+    "title": {"en": "Trade-offs taken on purpose.", "zh": "刻意做出的取捨。"},
+    "items": [
+      {"title": {"en": "A link instead of an account", "zh": "用連結取代帳號"},
+       "body": {"en": "No sign-up keeps the MVP small, but the token is the only lock: anyone holding the link can read the idea and the email on the session. Treat resume links like passwords.",
+                "zh": "不用註冊讓 MVP 保持精簡，但 token 就是唯一的鎖：拿到連結的人都看得到點子和 session 上的 email。接續連結要當成密碼看待。"}},
+      {"title": {"en": "One failed seat is not a failed run", "zh": "一席失敗，不等於整場失敗"},
+       "body": {"en": "When a model call errors, that seat records 這一席暫時失敗 with the reason and the round goes on. Only a timeout or an unexpected error fails the run, and a retry starts again from round 1.",
+                "zh": "某個模型呼叫出錯時，該席位記下「這一席暫時失敗」和原因，這一輪照常進行。只有逾時或意外錯誤會讓整場失敗，重新執行時從第 1 輪開始。"}},
+      {"title": {"en": "One gateway for five vendors", "zh": "五家模型，一個入口"},
+       "body": {"en": "Routing every seat through OpenRouter means one key, one bill, and one request format. The cost is a hard dependency: the endpoint is fixed in server/src/llm.ts, not a setting.",
+                "zh": "每個席位都走 OpenRouter，就只要一把金鑰、一份帳單、一種請求格式。代價是綁定這個服務：端點直接寫在 server/src/llm.ts，不是可以調整的設定。"}}
+    ]
+  },
+  "quickstart": {
+    "kicker": {"en": "Start here", "zh": "從這裡開始"},
+    "title": {"en": "One build, one process.", "zh": "一次建置，一個程序。"},
+    "intro": {
+      "en": "You need Node.js 22 and an OpenRouter API key. Vite 8 accepts 20.19+ or 22.12+, but avoid Node 24 for now (see the limits below). SearXNG and SMTP are optional. There is no hosted demo.",
+      "zh": "需要 Node.js 22 和一組 OpenRouter API key。Vite 8 接受 20.19+ 或 22.12+，但目前請避開 Node 24（原因見下方限制）。SearXNG 與 SMTP 可有可無。目前沒有公開的線上版本。"
+    },
+    "primary": {"href": "https://github.com/teddashh/ai-brainstorming/blob/main/.env.example", "label": {"en": "All settings", "zh": "所有設定"}},
+    "steps": [
+      {"title": {"en": "Install and build", "zh": "安裝並建置"},
+       "body": {"en": "In a clone of this repository, install and build both server/ and web/.", "zh": "在 clone 下來的 repo 裡，一次安裝並建置 server/ 與 web/。"},
+       "code": "npm run install:all\nnpm run build"},
+      {"title": {"en": "Configure", "zh": "填寫設定"},
+       "body": {"en": "npm start runs inside server/, so the .env file goes there, and the database lands in server/data/ by default. Set OPENROUTER_API_KEY and PUBLIC_URL; add SMTP_* for email.",
+                "zh": "npm start 會在 server/ 裡執行，所以 .env 要放在那裡，資料庫預設也會建在 server/data/。填入 OPENROUTER_API_KEY 和 PUBLIC_URL；要寄信再加上 SMTP_* 設定。"},
+       "code": "cp .env.example server/.env\n$EDITOR server/.env"},
+      {"title": {"en": "Start", "zh": "啟動"},
+       "body": {"en": "One process serves the built page and the API on 127.0.0.1:3001; open http://localhost:3001/idea. For public use, put a reverse proxy in front and set PUBLIC_URL to the public origin.",
+                "zh": "同一個程序在 127.0.0.1:3001 提供建置好的網頁與 API，打開 http://localhost:3001/idea 即可。要對外開放，請在前面加一層反向代理，並把 PUBLIC_URL 設成對外網址。"},
+       "code": "npm start"}
+    ]
+  },
+  "status": {
+    "kicker": {"en": "Honest status", "zh": "誠實的現況"},
+    "title": {"en": "Where it stands.", "zh": "目前的樣子。"},
+    "intro": {
+      "en": "A single-commit MVP from June 2026. package.json says 0.1.0, and there are no releases, tests, or CI yet.",
+      "zh": "2026 年 6 月只有一個 commit 的 MVP。package.json 標示 0.1.0，目前還沒有正式版本、測試或 CI。"
+    },
+    "works": [
+      {"en": "Start, resume, run, and export endpoints backed by SQLite in WAL mode", "zh": "建立、接續、執行、匯出四組 API，資料存在 WAL 模式的 SQLite"},
+      {"en": "Five seats per round through OpenRouter, each with its own model override", "zh": "每輪五個席位透過 OpenRouter 作答，每個席位都能替換模型"},
+      {"en": "Live progress over server-sent events, and polling when you return through the resume link", "zh": "用 server-sent events 即時顯示進度，從接續連結回來時改為輪詢"},
+      {"en": "Markdown export, plus resume and result emails when SMTP is set", "zh": "Markdown 匯出；設定 SMTP 後會寄出接續信與結果信"},
+      {"en": "Rate limits per IP, per email, and site-wide, with at most 3 runs at once", "zh": "每 IP、每 email 與全站的頻率限制，同時最多 3 個執行"}
+    ],
+    "limits": [
+      {"en": "Every seat is told to answer in Traditional Chinese, and the page copy is mostly Chinese", "zh": "每個席位都被要求用繁體中文回答，頁面文字也以中文為主"},
+      {"en": "Anyone with a resume link can read that session, email included, and there is no delete endpoint", "zh": "拿到接續連結就能讀取該 session，包含 email，也沒有刪除用的 API"},
+      {"en": "Rate limits live in memory. A restart during a run leaves the session marked running, with no retry button", "zh": "頻率限制存在記憶體裡。執行到一半重啟伺服器，該 session 會停在執行中，也不會出現重新執行的按鈕"},
+      {"en": "On Node 24.21, the locked better-sqlite3 11.10.0 aborted at startup in about half of the test runs; Node 22 started cleanly every time", "zh": "在 Node 24.21 上，lockfile 鎖定的 better-sqlite3 11.10.0 約有一半的啟動會中止；Node 22 每次都正常啟動"},
+      {"en": "An output filter drops any paragraph that mentions workflow or system prompt, which can clip real content when the idea is about workflows", "zh": "輸出過濾會刪掉提到 workflow 或 system prompt 的段落，點子本身和 workflow 有關時，可能誤刪正常內容"},
+      {"en": "No license file yet, and three Dependabot updates (hono, @hono/node-server, postcss) are still open", "zh": "還沒有授權檔，另有三個 Dependabot 更新（hono、@hono/node-server、postcss）尚未合併"}
+    ]
+  },
+  "facts": [
+    {"label": {"en": "Version", "zh": "版本"}, "value": {"en": "0.1.0, no releases", "zh": "0.1.0，尚無正式版本"}},
+    {"label": {"en": "License", "zh": "授權"}, "value": {"en": "Not specified", "zh": "尚未指定"}},
+    {"label": {"en": "Stack", "zh": "技術"}, "value": "Hono · React · SQLite"},
+    {"label": {"en": "Requires", "zh": "需求"}, "value": {"en": "Node.js 22 + OpenRouter key", "zh": "Node.js 22 + OpenRouter 金鑰"}},
+    {"label": {"en": "Last commit", "zh": "最後提交"}, "value": "2026-06-14"},
+    {"label": {"en": "Verified", "zh": "查核日期"}, "value": "2026-09-30"}
+  ],
+  "links": [
+    {"href": "https://github.com/teddashh/ai-brainstorming/blob/main/.env.example", "label": {"en": "Settings", "zh": "設定範例"}},
+    {"href": "https://github.com/teddashh/ai-brainstorming/blob/main/README.zh-TW.md", "label": {"en": "中文 README", "zh": "中文 README"}},
+    {"href": "https://teddashh.github.io/claude-idea-review-skill/", "label": {"en": "Related: idea review as a Claude Code skill", "zh": "相關專案：Claude Code 點子審查 skill"}}
+  ]
+}
