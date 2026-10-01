@@ -121,4 +121,4 @@ repo 裡沒有任何機密。執行資料放在 `data/`（用 `npm start` 啟動
 
 ## 授權
 
-這個 repo 目前還沒有加入授權檔。
+MIT，詳見 [LICENSE](LICENSE)。

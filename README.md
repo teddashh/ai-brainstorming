@@ -121,4 +121,4 @@ All limits are in memory, per one-hour window, and answer `429` with `Retry-Afte
 
 ## License
 
-No license file has been added to this repository yet.
+MIT, see [LICENSE](LICENSE).
