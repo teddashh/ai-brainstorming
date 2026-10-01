@@ -104,11 +104,12 @@ function serializeSession(row: IdeaSessionRow, messages: IdeaMessageRow[]) {
   };
 }
 
-function emit(stream: Parameters<Parameters<typeof streamSSE>[1]>[0], event: Record<string, unknown>) {
+function emit(stream: Parameters<Parameters<typeof streamSSE>[1]>[0], event: Record<string, unknown>): Promise<void> {
   try {
-    void stream.writeSSE({ event: String(event.type || 'message'), data: JSON.stringify(event) }).catch(() => {});
+    return stream.writeSSE({ event: String(event.type || 'message'), data: JSON.stringify(event) }).catch(() => {});
   } catch {
     // Best-effort live stream. DB/email are source of truth.
+    return Promise.resolve();
   }
 }
 
@@ -184,6 +185,7 @@ app.post('/api/idea/run/:token', (c) => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), Number(process.env.RUN_TIMEOUT_MS || 30 * 60 * 1000));
     const ping = setInterval(() => emit(stream, { type: 'idea_ping' }), 15000);
+    let finalEvents: Promise<unknown> = Promise.resolve();
     try {
       ideaStmts.markRunning.run(row.id);
       ideaStmts.deleteAiMessages.run(row.id);
@@ -245,17 +247,24 @@ app.post('/api/idea/run/:token', (c) => {
       const completed = ideaStmts.findByToken.get(token) as IdeaSessionRow;
       const finalMessages = ideaStmts.listMessages.all(row.id) as IdeaMessageRow[];
       await sendResultEmail({ to: completed.email, title: completed.title || titleFromIdea(completed.idea), resumeUrl: resumeUrl(token), markdown }).catch(() => false);
-      emit(stream, { type: 'idea_completed', session: serializeSession(completed, finalMessages) });
-      emit(stream, { type: 'finish' });
+      finalEvents = Promise.all([
+        emit(stream, { type: 'idea_completed', session: serializeSession(completed, finalMessages) }),
+        emit(stream, { type: 'finish' }),
+      ]);
     } catch (err) {
       ideaStmts.markFailed.run((err as Error).message.slice(0, 1000), row.id);
-      emit(stream, { type: 'error', message: (err as Error).message });
-      emit(stream, { type: 'finish' });
+      finalEvents = Promise.all([
+        emit(stream, { type: 'error', message: (err as Error).message }),
+        emit(stream, { type: 'finish' }),
+      ]);
     } finally {
       clearTimeout(timeout);
       clearInterval(ping);
       running.delete(row.id);
     }
+    // streamSSE closes the stream as soon as this callback returns, and writeSSE
+    // only writes after an internal await, so let the last events go out first.
+    await finalEvents;
   });
 });
 
