@@ -80,6 +80,8 @@ code {
   font-size: 0.9em;
 }
 
+code.nowrap { white-space: nowrap; }
+
 .skip-link {
   position: fixed;
   z-index: 100;
@@ -375,6 +377,9 @@ h1 em::after {
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+
+/* a long file name in the panel title wraps instead of widening the hero */
+.panel-top > span:first-child { min-width: 0; overflow-wrap: anywhere; }
 
 .live-dot {
   display: inline-flex;
@@ -1327,7 +1332,8 @@ h2.lang-zh {
 
 .footer-inner {
   display: grid;
-  grid-template-columns: 1fr auto;
+  /* a long row of links wraps instead of squeezing the brand column */
+  grid-template-columns: minmax(16rem, 1fr) auto;
   align-items: end;
   gap: 30px;
   padding: 48px 0;
@@ -1395,7 +1401,7 @@ h2.lang-zh {
   .language-switch, .github-link { width: max-content; }
 
   .hero {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     padding-top: 76px;
   }
 
