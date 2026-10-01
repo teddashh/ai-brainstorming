@@ -50,7 +50,7 @@
   ],
   "flow": {
     "kicker": {"en": "How it works", "zh": "運作方式"},
-    "title": {"en": "One form, several rounds, one transcript.", "zh": "一張表單，幾輪討論，一份紀錄。"},
+    "title": {"en": "One form, several rounds, one transcript.", "zh": "一張表單，<br>幾輪討論，一份紀錄。"},
     "intro": {
       "en": "The page starts the run as soon as the session exists. Everything after that is kept on the server, so closing the tab does not lose the review.",
       "zh": "Session 一建立，頁面就自動開始執行。之後的一切都留在伺服器上，關掉分頁也不會弄丟這次審查。"
@@ -72,7 +72,7 @@
   },
   "capabilities": {
     "kicker": {"en": "What you get", "zh": "你會得到什麼"},
-    "title": {"en": "Small, but built for public use.", "zh": "規模不大，但照公開服務設計。"},
+    "title": {"en": "Small, but built for public use.", "zh": "規模不大，標準不低。"},
     "intro": {
       "en": "One Hono server, one React page, one SQLite file. The parts that face strangers on the internet have limits; the parts that are nice to have can be switched off.",
       "zh": "一個 Hono 伺服器、一個 React 頁面、一個 SQLite 檔。會面對陌生使用者的部分都有限制，錦上添花的部分可以關掉。"
@@ -100,7 +100,7 @@
        "tag": "GET /api/idea/export/:token.md"},
       {"title": {"en": "Limits for a public form", "zh": "公開表單該有的限制"},
        "body": {"en": "Per hour: 12 starts per IP, 4 per email, 8 runs per IP, plus global caps. At most 3 runs at once, each with a 30-minute timeout. Behind a trusted proxy, TRUST_PROXY_HEADERS lets the per-IP limits see the real client.",
-                "zh": "每小時每個 IP 最多建立 12 次、每個 email 4 次，每個 IP 最多執行 8 次，另有全站上限。同時最多 3 個執行，每個執行 30 分鐘逾時。放在可信任的反向代理後面時，TRUST_PROXY_HEADERS 讓每 IP 限制看到真正的來源。"},
+                "zh": "每小時每個 IP 最多建立 12 次、每個 email 4 次，每個 IP 最多執行 8 次，另有全站上限。同時最多 3 個執行，每個執行 30 分鐘逾時。放在可信任的反向代理後面時，TRUST_PROXY_HEADERS 讓每 IP 的限制以真正的來源為準。"},
        "tag": "server/src/index.ts"}
     ]
   },
@@ -121,7 +121,7 @@
   },
   "quickstart": {
     "kicker": {"en": "Start here", "zh": "從這裡開始"},
-    "title": {"en": "One build, one process.", "zh": "一次建置，一個程序。"},
+    "title": {"en": "One build, one process.", "zh": "一次建置，一個程式。"},
     "intro": {
       "en": "You need Node.js 22 and an OpenRouter API key. Vite 8 accepts 20.19+ or 22.12+, but avoid Node 24 for now (see the limits below). SearXNG and SMTP are optional. There is no hosted demo.",
       "zh": "需要 Node.js 22 和一組 OpenRouter API key。Vite 8 接受 20.19+ 或 22.12+，但目前請避開 Node 24（原因見下方限制）。SearXNG 與 SMTP 可有可無。目前沒有公開的線上版本。"
@@ -137,7 +137,7 @@
        "code": "cp .env.example server/.env\n$EDITOR server/.env"},
       {"title": {"en": "Start", "zh": "啟動"},
        "body": {"en": "One process serves the built page and the API on 127.0.0.1:3001; open http://localhost:3001/idea. For public use, put a reverse proxy in front and set PUBLIC_URL to the public origin.",
-                "zh": "同一個程序在 127.0.0.1:3001 提供建置好的網頁與 API，打開 http://localhost:3001/idea 即可。要對外開放，請在前面加一層反向代理，並把 PUBLIC_URL 設成對外網址。"},
+                "zh": "同一個程式在 127.0.0.1:3001 提供建置好的網頁與 API，打開 http://localhost:3001/idea 即可。要對外開放，請在前面加一層反向代理，並把 PUBLIC_URL 設成對外網址。"},
        "code": "npm start"}
     ]
   },
