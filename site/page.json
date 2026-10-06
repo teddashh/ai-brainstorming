@@ -238,7 +238,7 @@
           },
           "note": {
             "en": "The answers stream in while it runs, with a keep-alive every 15 seconds.",
-            "zh": "跑的時候回答會一路送過來，每 15 秒一次 keep-alive。"
+            "zh": "跑的時候回答會一路送過來，keep-alive 每 15 秒送一次。"
           },
           "tone": "info",
           "icon": "bolt"
