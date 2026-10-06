@@ -5,7 +5,7 @@
   "mark": "AB",
   "palette": "violet",
   "default_branch": "main",
-  "verified": "2026-10-01",
+  "verified": "2026-10-06",
   "language": "TypeScript",
   "license": {"spdx": "MIT", "label": {"en": "MIT License", "zh": "MIT 授權"}, "href": "LICENSE"},
   "title": {"en": "A five-model review panel for one idea", "zh": "五個模型組成的點子審查小組"},
@@ -169,12 +169,534 @@
     {"label": {"en": "License", "zh": "授權"}, "value": "MIT"},
     {"label": {"en": "Stack", "zh": "技術"}, "value": "Hono · React · SQLite"},
     {"label": {"en": "Requires", "zh": "需求"}, "value": {"en": "Node.js 22 + OpenRouter key", "zh": "Node.js 22 + OpenRouter 金鑰"}},
-    {"label": {"en": "Last commit", "zh": "最後提交"}, "value": "2026-10-01"},
-    {"label": {"en": "Verified", "zh": "查核日期"}, "value": "2026-10-01"}
+    {"label": {"en": "Last commit", "zh": "最後提交"}, "value": "2026-10-06"},
+    {"label": {"en": "Verified", "zh": "查核日期"}, "value": "2026-10-06"}
   ],
   "links": [
     {"href": "https://github.com/teddashh/ai-brainstorming/blob/main/.env.example", "label": {"en": "Settings", "zh": "設定範例"}},
     {"href": "https://github.com/teddashh/ai-brainstorming/blob/main/README.zh-TW.md", "label": {"en": "中文 README", "zh": "中文 README"}},
     {"href": "https://teddashh.github.io/claude-idea-review-skill/", "label": {"en": "Related: idea review as a Claude Code skill", "zh": "相關專案：Claude Code 點子審查 skill"}}
+  ],
+  "flows": [
+    {
+      "id": "session-path",
+      "after": "how",
+      "heading": {
+        "en": "How a review moves",
+        "zh": "一次審查怎麼走"
+      },
+      "intro": {
+        "en": "The browser opens the run as soon as the session row exists. SQLite keeps the record.",
+        "zh": "Session 一寫入，瀏覽器就打開執行。紀錄留在 SQLite。"
+      },
+      "spec": {
+        "columns": [
+          [
+            0
+          ],
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ]
+        ],
+        "core": 1
+      },
+      "steps": [
+        {
+          "title": {
+            "en": "Submit form",
+            "zh": "送出表單"
+          },
+          "note": {
+            "en": "POST /api/idea/start accepts an email, an idea of 10 to 12,000 characters, and a round count of 5, 12, or 16.",
+            "zh": "POST /api/idea/start 接收 email、10 到 12,000 字的點子，以及 5、12 或 16 輪。"
+          },
+          "tone": "neutral",
+          "icon": "chat"
+        },
+        {
+          "title": {
+            "en": "Store row",
+            "zh": "寫入資料列"
+          },
+          "note": {
+            "en": "The server stores a 24-byte token with status created, and stores the idea as the user message.",
+            "zh": "伺服器存下一組 24 位元組的 token，狀態是 created，並把點子存成使用者訊息。"
+          },
+          "tone": "accent",
+          "icon": "database"
+        },
+        {
+          "title": {
+            "en": "Stream run",
+            "zh": "串流執行"
+          },
+          "note": {
+            "en": "The page then calls POST /api/idea/run and reads server-sent events, including a ping every 15 seconds.",
+            "zh": "頁面接著呼叫 POST /api/idea/run，並讀取 server-sent events，其中每 15 秒有一次 ping。"
+          },
+          "tone": "info",
+          "icon": "bolt"
+        },
+        {
+          "title": {
+            "en": "Save result",
+            "zh": "存下結果"
+          },
+          "note": {
+            "en": "The server stores the Markdown on the row, sets status to completed, and calls the result email, which sends only when SMTP host, user, and password are all set.",
+            "zh": "伺服器把 Markdown 寫進該列，狀態改為 completed，並呼叫結果信；只有 SMTP 主機、帳號、密碼都有設定時才會寄出。"
+          },
+          "tone": "neutral",
+          "icon": "doc"
+        }
+      ],
+      "ticks": [
+        {
+          "en": "session row created",
+          "zh": "已建立資料列"
+        },
+        {
+          "en": "run stream is open",
+          "zh": "執行串流已開啟"
+        },
+        {
+          "en": "transcript stored",
+          "zh": "逐字稿已存下"
+        }
+      ],
+      "caption": {
+        "en": "The form creates a SQLite session and a resume token. The page immediately starts POST /api/idea/run and reads the event stream. When the rounds finish, buildMarkdown stores the transcript and the result email is attempted.",
+        "zh": "表單建立 SQLite session 和接續 token。頁面立刻呼叫 POST /api/idea/run 並讀取事件串流。輪次結束後，buildMarkdown 存下逐字稿，並嘗試寄出結果信。"
+      }
+    },
+    {
+      "id": "round-plan",
+      "after": "how",
+      "heading": {
+        "en": "How rounds are split",
+        "zh": "輪次怎麼分配"
+      },
+      "intro": {
+        "en": "The form offers three lengths. schedule() turns the choice into a fixed list of phases.",
+        "zh": "表單有三種長度。schedule() 把選擇變成固定的階段清單。"
+      },
+      "spec": {
+        "columns": [
+          [
+            0
+          ],
+          [
+            1
+          ]
+        ],
+        "core": 1,
+        "lanes": [
+          "5: 1/3/1",
+          "12: 2/8/2",
+          "16: 3/10/3"
+        ],
+        "selectedLane": 0
+      },
+      "steps": [
+        {
+          "title": {
+            "en": "Pick length",
+            "zh": "選擇長度"
+          },
+          "note": {
+            "en": "The form sends 5, 12, or 16, the start route rejects any other value, and an omitted value is treated as 5.",
+            "zh": "表單送出 5、12 或 16，其他數字會被拒絕，沒填則當成 5。"
+          },
+          "tone": "neutral",
+          "icon": "window"
+        },
+        {
+          "title": {
+            "en": "Build phases",
+            "zh": "排定階段"
+          },
+          "note": {
+            "en": "schedule() expands 5 rounds into 1 thesis, 3 clash, and 1 converge, 12 into 2, 8, and 2, and 16 into 3, 10, and 3.",
+            "zh": "schedule() 把 5 輪排成 1 次立論、3 次攻防、1 次收斂，12 輪是 2、8、2，16 輪是 3、10、3。"
+          },
+          "tone": "accent",
+          "icon": "route"
+        }
+      ],
+      "ticks": [
+        {
+          "en": "default length is 5",
+          "zh": "預設長度是 5 輪"
+        },
+        {
+          "en": "clash is the long phase",
+          "zh": "攻防是最長階段"
+        }
+      ],
+      "caption": {
+        "en": "The page defaults to 5 rounds, shown selected here as 1 thesis, 3 clash, and 1 converge. Choosing 12 or 16 uses 2, 8, 2 or 3, 10, 3. The prompt labels those phases 搜尋立論, 互相攻防, and 漸進收斂.",
+        "zh": "頁面預設 5 輪，這裡選中的是 1 次立論、3 次攻防、1 次收斂。選 12 或 16 則是 2、8、2 或 3、10、3。Prompt 把這三個階段寫成搜尋立論、互相攻防、漸進收斂。"
+      }
+    },
+    {
+      "id": "one-prompt",
+      "after": "features",
+      "heading": {
+        "en": "What one seat reads",
+        "zh": "一個席位讀到什麼"
+      },
+      "intro": {
+        "en": "Every seat gets the same prompt shape. Three inputs are filled in, then the answer is filtered.",
+        "zh": "每個席位的 prompt 形狀相同。先填入三項內容，回答回來後再過濾。"
+      },
+      "spec": {
+        "columns": [
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ]
+        ],
+        "core": 3
+      },
+      "steps": [
+        {
+          "title": {
+            "en": "Full idea",
+            "zh": "原始點子"
+          },
+          "note": {
+            "en": "The full idea text is placed in the prompt unchanged.",
+            "zh": "點子全文原樣放進 prompt。"
+          },
+          "tone": "neutral",
+          "icon": "doc"
+        },
+        {
+          "title": {
+            "en": "Evidence",
+            "zh": "外部資料"
+          },
+          "note": {
+            "en": "If SEARXNG_URL is unset or the searches return nothing, the prompt says to treat claims as hypotheses, and otherwise it adds up to 9 results from three searches.",
+            "zh": "沒有 SEARXNG_URL 或搜尋沒有結果時，prompt 要求把說法當成假設；否則會放入三次搜尋的最多 9 筆結果。"
+          },
+          "tone": "info",
+          "icon": "search"
+        },
+        {
+          "title": {
+            "en": "Recent answers",
+            "zh": "最近十則"
+          },
+          "note": {
+            "en": "The prompt gets the last 10 answers from earlier rounds, each cut at 1,200 characters, and it does not include other seats from the current round.",
+            "zh": "Prompt 放入先前輪次的最後 10 則回答，每則截到 1,200 字，不包含這一輪的其他席位。"
+          },
+          "tone": "neutral",
+          "icon": "chat"
+        },
+        {
+          "title": {
+            "en": "Call model",
+            "zh": "呼叫模型"
+          },
+          "note": {
+            "en": "callParticipant sends one user message to OpenRouter chat completions at temperature 0.75 with max_tokens 1800, and the prompt asks for 350 to 650 Traditional Chinese characters.",
+            "zh": "callParticipant 以 temperature 0.75、max_tokens 1800 送出一則 user 訊息到 OpenRouter，prompt 並要求用繁體中文寫 350 到 650 字。"
+          },
+          "tone": "accent",
+          "icon": "cloud"
+        },
+        {
+          "title": {
+            "en": "Drop lines",
+            "zh": "刪除段落"
+          },
+          "note": {
+            "en": "Paragraphs that mention workflow, system prompt, SearXNG, 提示詞, or 系統提示 are removed, and the original text is kept if that removes everything.",
+            "zh": "提到 workflow、system prompt、SearXNG、提示詞或系統提示的段落會刪掉；若因此沒有內容，就保留原文。"
+          },
+          "tone": "warn",
+          "icon": "mask"
+        }
+      ],
+      "ticks": [
+        {
+          "en": "idea, evidence, history",
+          "zh": "點子、資料、紀錄"
+        },
+        {
+          "en": "one call per seat",
+          "zh": "每席各呼叫一次"
+        },
+        {
+          "en": "filtered before save",
+          "zh": "存檔前先過濾"
+        }
+      ],
+      "caption": {
+        "en": "Each prompt contains the idea, the evidence bundle or the hypothesis line, and at most the last 10 earlier answers. Seats in the same round do not see each other. The call uses that seat's model id, then a paragraph filter runs before the text is saved.",
+        "zh": "每份 prompt 含有點子、資料包或假設說明，以及最多 10 則先前回答。同一輪的席位彼此看不到。呼叫使用該席位的模型 id，存檔前會再濾掉特定段落。"
+      }
+    },
+    {
+      "id": "run-limits",
+      "after": "features",
+      "heading": {
+        "en": "How many runs fit",
+        "zh": "同時能跑幾場"
+      },
+      "intro": {
+        "en": "The guards live in memory on one process. They reset when that process restarts.",
+        "zh": "這些限制存在單一程式的記憶體裡。程式重啟就歸零。"
+      },
+      "spec": {
+        "columns": [
+          [
+            0
+          ],
+          [
+            1
+          ],
+          [
+            2
+          ]
+        ],
+        "core": 1,
+        "meter": true
+      },
+      "steps": [
+        {
+          "title": {
+            "en": "Count the hour",
+            "zh": "計算一小時"
+          },
+          "note": {
+            "en": "Each hour allows 12 starts per IP, 4 starts per email, and 8 runs per IP, with site-wide defaults of 1,000 starts and 200 runs.",
+            "zh": "每小時每個 IP 可建立 12 次、每個 email 4 次、每個 IP 可執行 8 次，全站預設另有 1,000 次建立和 200 次執行。"
+          },
+          "tone": "neutral",
+          "icon": "clock"
+        },
+        {
+          "title": {
+            "en": "Admit a run",
+            "zh": "放行執行"
+          },
+          "note": {
+            "en": "The default cap is 3 runs in memory at once, a fourth receives HTTP 503 server_busy, and each run aborts at the default of 30 minutes.",
+            "zh": "預設同時最多 3 場在記憶體裡，第 4 場得到 HTTP 503 server_busy，每場預設 30 分鐘後逾時。"
+          },
+          "tone": "warn",
+          "icon": "pool"
+        },
+        {
+          "title": {
+            "en": "Reject extras",
+            "zh": "拒絕超量"
+          },
+          "note": {
+            "en": "Past an hourly cap the API returns 429 with Retry-After, and a restart clears the in-memory counters.",
+            "zh": "超過每小時上限時 API 回 429 並帶 Retry-After，重啟會清掉記憶體裡的計數。"
+          },
+          "tone": "warn",
+          "icon": "bell"
+        }
+      ],
+      "ticks": [
+        {
+          "en": "3 runs at once",
+          "zh": "同時最多 3 場"
+        },
+        {
+          "en": "30 minute default",
+          "zh": "預設 30 分鐘"
+        },
+        {
+          "en": "hourly cap returns 429",
+          "zh": "超過時回 429"
+        }
+      ],
+      "caption": {
+        "en": "Before a run starts, the server checks the hourly counters and the in-memory cap, 3 by default. Past an hourly cap it returns 429. A further concurrent run returns 503. The run itself stops at 30 minutes by default. Restarting the process clears the counters, and a session left on running has no retry button.",
+        "zh": "執行開始前，伺服器會檢查每小時計數和記憶體上限，預設同時 3 場。超過每小時上限回 429。再多的同時執行回 503。單場預設 30 分鐘逾時。程式重啟會清掉計數，停在 running 的 session 也不會出現重跑按鈕。"
+      }
+    },
+    {
+      "id": "link-lock",
+      "after": "decisions",
+      "heading": {
+        "en": "Who can open a session",
+        "zh": "誰能打開這份審查"
+      },
+      "intro": {
+        "en": "There is no account. The resume link is the only lock, and the session includes the email.",
+        "zh": "沒有帳號。接續連結是唯一的鎖，而且 session 裡含有 email。"
+      },
+      "spec": {
+        "columns": [
+          [
+            0
+          ],
+          [
+            1
+          ]
+        ],
+        "core": 1,
+        "boundaryAfter": 0
+      },
+      "zones": {
+        "en": [
+          "your browser",
+          "the token",
+          "any holder"
+        ],
+        "zh": [
+          "你的瀏覽器",
+          "這組 token",
+          "持有連結者"
+        ]
+      },
+      "steps": [
+        {
+          "title": {
+            "en": "Resume URL",
+            "zh": "接續網址"
+          },
+          "note": {
+            "en": "The address is /idea?s= plus the token, and that same URL is emailed when SMTP host, user, and password are set.",
+            "zh": "網址是 /idea?s= 加上 token；SMTP 主機、帳號、密碼都有設定時，同一個網址會寄出。"
+          },
+          "tone": "neutral",
+          "icon": "key"
+        },
+        {
+          "title": {
+            "en": "Read session",
+            "zh": "讀取內容"
+          },
+          "note": {
+            "en": "The session route returns the idea, the email, and the messages, and it does not check who is asking.",
+            "zh": "讀取 session 的路由會回傳點子、email 和訊息，不會檢查是誰在要。"
+          },
+          "tone": "warn",
+          "icon": "eye"
+        }
+      ],
+      "ticks": [
+        {
+          "en": "token is the only check",
+          "zh": "token 是唯一檢查"
+        },
+        {
+          "en": "email is in the payload",
+          "zh": "回傳內容含 email"
+        },
+        {
+          "en": "there is no delete route",
+          "zh": "沒有刪除路由"
+        }
+      ],
+      "caption": {
+        "en": "Anyone who has the resume link can read that session, including the email address. The server does not ask for an account, and there is no delete endpoint.",
+        "zh": "拿到接續連結的人就能讀取該 session，包含 email。伺服器不要求帳號，也沒有刪除用的路由。"
+      }
+    },
+    {
+      "id": "seat-retry",
+      "after": "decisions",
+      "heading": {
+        "en": "What a failure does",
+        "zh": "失敗時會怎樣"
+      },
+      "intro": {
+        "en": "A seat can fail without stopping the round. A failed run can be started again from round 1.",
+        "zh": "單一席位失敗不會停掉這一輪。整場失敗可以從第 1 輪再跑。"
+      },
+      "spec": {
+        "columns": [
+          [
+            0
+          ],
+          [
+            1
+          ],
+          [
+            2
+          ]
+        ],
+        "core": 1,
+        "loop": true
+      },
+      "steps": [
+        {
+          "title": {
+            "en": "Call a seat",
+            "zh": "呼叫席位"
+          },
+          "note": {
+            "en": "Each seat is its own OpenRouter request, and the round waits for every seat to settle rather than for every seat to succeed.",
+            "zh": "每個席位是各自的 OpenRouter 請求，這一輪會等每個席位結束，而不是等每個席位都成功。"
+          },
+          "tone": "neutral",
+          "icon": "cloud"
+        },
+        {
+          "title": {
+            "en": "Record it",
+            "zh": "照樣記下"
+          },
+          "note": {
+            "en": "A thrown call is saved as the text 這一席暫時失敗 plus the reason, and that still counts as the seat's message for the round.",
+            "zh": "呼叫丟出錯誤時，會存成「這一席暫時失敗」加上原因，仍算這一輪該席位的訊息。"
+          },
+          "tone": "warn",
+          "icon": "ledger"
+        },
+        {
+          "title": {
+            "en": "Retry run",
+            "zh": "整場重跑"
+          },
+          "note": {
+            "en": "When status is failed, the page button calls the run again, which deletes stored AI messages and starts at round 1.",
+            "zh": "狀態是 failed 時，頁面上的按鈕會再呼叫執行，先刪掉已存的 AI 訊息，並從第 1 輪開始。"
+          },
+          "tone": "accent",
+          "icon": "forward"
+        }
+      ],
+      "ticks": [
+        {
+          "en": "seat failure is saved",
+          "zh": "席位失敗會存下"
+        },
+        {
+          "en": "the round still finishes",
+          "zh": "這一輪仍會結束"
+        },
+        {
+          "en": "retry starts at round 1",
+          "zh": "重跑從第 1 輪"
+        }
+      ],
+      "caption": {
+        "en": "When one model call throws, that seat's message is the failure line and the other seats still count. Only a timeout or another run-level error marks the session failed. The return rail is the retry button, which deletes AI messages and starts again at round 1.",
+        "zh": "某個模型呼叫出錯時，該席位的訊息是失敗說明，其他席位照算。只有逾時或其他整場錯誤會把 session 標成 failed。回程是重跑按鈕，它會刪掉 AI 訊息並從第 1 輪再開始。"
+      }
+    }
   ]
 }
